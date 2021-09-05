@@ -1,6 +1,6 @@
 > module Main where
 
-> import TreeAcceptor
+> import Acceptor
 > import Visualizer
 
 > import qualified Data.Set as Set
@@ -9,9 +9,23 @@
 > main = putStr . toDot $ s
 
 > s :: Acceptor String [] String
-> s = end (Set.singleton "S")
->     . add "a" [] ["A"]
->     . add "b" [] ["B"]
->     . add "S" ["A","B"] ["S"]
->     . add "S" ["A","S","B"] ["S"]
->     $ empty
+> s = fromCFG
+>     [ ("S",["a","S","b"])
+>     , ("S",["a","b"])
+>     , ("a",[])
+>     , ("b",[])
+>     ]
+>     $ Set.singleton "S"
+
+> abba :: Acceptor String [] String
+> abba = fromtrs
+>        [ ("a",[],"A")
+>        , ("b",[],"B")
+>        , ("S",["A","B"],"AB")
+>        , ("S",["B","A"],"BA")
+>        , ("S",["A","AB","B"],"AB")
+>        , ("S",["A","BA","B"],"AB")
+>        , ("S",["B","AB","A"],"BA")
+>        , ("S",["B","BA","A"],"BA")
+>        ]
+>        $ Set.fromList ["AB","BA"]
